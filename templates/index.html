@@ -40,22 +40,18 @@
     <h2 class="section-title">Your Overview</h2>
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon">🎯</div>
         <div class="stat-value">{{ agg['total_sessions'] }}</div>
         <div class="stat-label">Total Sessions</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">💰</div>
         <div class="stat-value">${{ '%.2f'|format(agg['total_buy_in']) }}</div>
         <div class="stat-label">Total Buy-In</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">🏆</div>
         <div class="stat-value">${{ '%.2f'|format(agg['total_earned']) }}</div>
         <div class="stat-label">Total Earned</div>
       </div>
       <div class="stat-card {% if agg['total_net'] >= 0 %}stat-positive{% else %}stat-negative{% endif %}">
-        <div class="stat-icon">{{ '📈' if agg['total_net'] >= 0 else '📉' }}</div>
         <div class="stat-value net-value">
           {{ '+' if agg['total_net'] >= 0 else '' }}${{ '%.2f'|format(agg['total_net']) }}
         </div>
@@ -68,7 +64,6 @@
 <section class="section">
   <div class="container">
     <div class="empty-state">
-      <div class="empty-icon">🃏</div>
       <h2>No sessions yet</h2>
       <p>Add your first poker session to start tracking your progress.</p>
       <a href="{{ url_for('add_session') }}" class="btn btn-primary" id="empty-add-session">+ Add Your First Session</a>
@@ -83,17 +78,14 @@
     <h2 class="section-title">Everything You Need</h2>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">📝</div>
         <h3>Session Logging</h3>
         <p>Record buy-ins, end stacks, blinds, game type and personal notes for every session.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📊</div>
         <h3>Profit Analytics</h3>
         <p>Visualize your cumulative profit over time with a beautiful line chart.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🎰</div>
         <h3>Live &amp; Online</h3>
         <p>Track both live casino sessions and online sessions separately.</p>
       </div>

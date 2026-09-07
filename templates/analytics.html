@@ -18,29 +18,24 @@
     <!-- Dashboard Cards -->
     <div class="stats-grid stats-grid-5">
       <div class="stat-card">
-        <div class="stat-icon">🎯</div>
         <div class="stat-value">{{ agg['total_sessions'] }}</div>
         <div class="stat-label">Sessions</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">💸</div>
         <div class="stat-value">${{ '%.2f'|format(agg['total_buy_in']) }}</div>
         <div class="stat-label">Total Buy-In</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">💰</div>
         <div class="stat-value">${{ '%.2f'|format(agg['total_earned']) }}</div>
         <div class="stat-label">Total Earned</div>
       </div>
       <div class="stat-card {% if agg['total_net'] >= 0 %}stat-positive{% else %}stat-negative{% endif %}">
-        <div class="stat-icon">{{ '📈' if agg['total_net'] >= 0 else '📉' }}</div>
         <div class="stat-value">
           {{ '+' if agg['total_net'] >= 0 else '' }}${{ '%.2f'|format(agg['total_net']) }}
         </div>
         <div class="stat-label">Net P/L</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">🏆</div>
         <div class="stat-value">{{ win_rate }}%</div>
         <div class="stat-label">Win Rate</div>
       </div>
@@ -86,7 +81,7 @@
               <td data-label="Date">{{ s['date'] }}</td>
               <td data-label="Type">
                 <span class="badge {{ 'badge-live' if s['game_type'] == 'live' else 'badge-online' }}">
-                  {{ '🏠' if s['game_type'] == 'live' else '💻' }} {{ s['game_type']|capitalize }}
+                  {{ s['game_type']|capitalize }}
                 </span>
               </td>
               <td data-label="Blinds">{{ s['blinds'] }}</td>
@@ -124,7 +119,6 @@
 
     {% else %}
     <div class="empty-state">
-      <div class="empty-icon">📊</div>
       <h2>No sessions recorded yet</h2>
       <p>Start tracking your sessions to see analytics here.</p>
       <a href="{{ url_for('add_session') }}" class="btn btn-primary" id="empty-analytics-add">+ Add Your First Session</a>

@@ -36,11 +36,8 @@
       <div class="flash-container">
         {% for category, message in messages %}
           <div class="flash flash-{{ category }}" role="alert">
-            <span class="flash-icon">
-              {% if category == 'success' %}✓{% elif category == 'error' %}✗{% else %}ℹ{% endif %}
-            </span>
             {{ message }}
-            <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Close">×</button>
+            <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>
           </div>
         {% endfor %}
       </div>
@@ -55,8 +52,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner">
-      <span class="footer-suits">♠ ♥ ♦ ♣</span>
-      <p>© 2024 PokerTracker — Track every chip.</p>
+      <p>&copy; 2024 PokerTracker &mdash; Track every chip.</p>
     </div>
   </footer>
 

@@ -33,12 +33,12 @@
               <input type="radio" id="type_live" name="game_type" value="live"
                 {% if not form_data or form_data.get('game_type', 'live') == 'live' %}checked{% endif %}
                 class="toggle-radio" />
-              <label for="type_live" class="toggle-label" id="label-live">🏠 Live</label>
+              <label for="type_live" class="toggle-label" id="label-live">Live</label>
 
               <input type="radio" id="type_online" name="game_type" value="online"
                 {% if form_data and form_data.get('game_type') == 'online' %}checked{% endif %}
                 class="toggle-radio" />
-              <label for="type_online" class="toggle-label" id="label-online">💻 Online</label>
+              <label for="type_online" class="toggle-label" id="label-online">Online</label>
             </div>
           </div>
         </div>
