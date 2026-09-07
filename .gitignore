@@ -13,6 +13,27 @@ env/
 # Database (optional — remove to track it)
 poker.db
 
+# Environment variables — NEVER commit real secrets
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Database (optional — remove to track it)
+poker.db
+
 # IDE
 .vscode/
 .idea/

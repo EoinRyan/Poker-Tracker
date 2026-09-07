@@ -1,25 +1,59 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+import os
+from functools import wraps
+from datetime import timedelta
+
+from dotenv import load_dotenv
+load_dotenv()  # Load .env before anything else
+
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import date as today_date
 import database
+from auth import auth_bp
 
 app = Flask(__name__)
-app.secret_key = "poker-tracker-secret-key-2024"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-fallback-secret-change-me")
+app.permanent_session_lifetime = timedelta(days=30)
+
+# Register auth blueprint
+app.register_blueprint(auth_bp)
 
 # Initialize the database on startup
 database.init_db()
 
 
+# ── Login Required Decorator ──────────────────────────────────
+def login_required(f):
+    """Redirect to login page if the user is not authenticated."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("user_id"):
+            return redirect(url_for("auth.login_page"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def get_user_id():
+    """Helper to retrieve the current user's ID from the session."""
+    return session.get("user_id")
+
+
+# ── Routes ────────────────────────────────────────────────────
+
 @app.route("/")
+@login_required
 def index():
     """Home / landing page."""
-    agg = database.get_aggregates()
+    user_id = get_user_id()
+    agg = database.get_aggregates(user_id)
     return render_template("index.html", agg=agg)
 
 
 @app.route("/add", methods=["GET", "POST"])
+@login_required
 def add_session():
     """Add a new poker session."""
-    previous_blinds = database.get_previous_blinds()
+    user_id = get_user_id()
+    previous_blinds = database.get_previous_blinds(user_id)
 
     if request.method == "POST":
         date = request.form.get("date", "").strip()
@@ -86,9 +120,8 @@ def add_session():
                 previous_blinds=previous_blinds,
             )
 
-        # Format blinds as "SB/BB" string for storage
         blinds = f"{small_blind:g}/{big_blind:g}"
-        database.add_session(date, game_type, blinds, buy_in, end_amount, notes)
+        database.add_session(user_id, date, game_type, blinds, buy_in, end_amount, notes)
         flash("Session added successfully!", "success")
         return redirect(url_for("analytics"))
 
@@ -101,11 +134,13 @@ def add_session():
 
 
 @app.route("/analytics")
+@login_required
 def analytics():
     """Analytics dashboard with session log."""
-    sessions = database.get_all_sessions()
-    agg = database.get_aggregates()
-    chart_data = database.get_sessions_for_chart()
+    user_id = get_user_id()
+    sessions = database.get_all_sessions(user_id)
+    agg = database.get_aggregates(user_id)
+    chart_data = database.get_sessions_for_chart(user_id)
 
     # Build cumulative profit series for the chart
     cumulative = 0
@@ -131,9 +166,11 @@ def analytics():
 
 
 @app.route("/delete/<int:session_id>", methods=["POST"])
+@login_required
 def delete_session(session_id):
-    """Delete a session by ID."""
-    database.delete_session(session_id)
+    """Delete a session by ID (scoped to the current user)."""
+    user_id = get_user_id()
+    database.delete_session(session_id, user_id)
     flash("Session deleted.", "info")
     return redirect(url_for("analytics"))
 

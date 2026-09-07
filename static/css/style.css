@@ -146,6 +146,34 @@ h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; }
   background: rgba(212, 168, 67, 0.1);
 }
 
+.nav-user-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--color-border);
+  margin-left: 8px;
+}
+
+.nav-user-email {
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-signout {
+  font-size: 0.82rem;
+  color: var(--color-text-dim);
+}
+
+.nav-signout:hover {
+  color: var(--color-loss);
+  background: rgba(224, 82, 82, 0.08);
+}
+
 .nav-toggle {
   display: none;
   flex-direction: column;

@@ -23,6 +23,12 @@
         <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" id="nav-home">Home</a></li>
         <li><a href="{{ url_for('add_session') }}" class="nav-link {% if request.endpoint == 'add_session' %}active{% endif %}" id="nav-add">+ Add Session</a></li>
         <li><a href="{{ url_for('analytics') }}" class="nav-link {% if request.endpoint == 'analytics' %}active{% endif %}" id="nav-analytics">Analytics</a></li>
+        {% if session.get('user_email') %}
+        <li class="nav-user-info">
+          <span class="nav-user-email">{{ session['user_email'] }}</span>
+          <a href="{{ url_for('auth.auth_logout') }}" class="nav-link nav-signout" id="nav-signout">Sign Out</a>
+        </li>
+        {% endif %}
       </ul>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
