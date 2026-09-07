@@ -171,3 +171,34 @@
     }, 50 + i * 40);
   });
 })();
+
+
+// ── Delete Confirmation Modal ───────────────────────────────
+function openDeleteModal(btn) {
+  const url = btn.getAttribute('data-delete-url');
+  const modal = document.getElementById('deleteModal');
+  const form  = document.getElementById('deleteForm');
+  if (!modal || !form) return;
+  form.setAttribute('action', url);
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal() {
+  const modal = document.getElementById('deleteModal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Close modal on overlay click or ESC
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('deleteModal');
+  if (!modal) return;
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeDeleteModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeDeleteModal();
+  });
+});
