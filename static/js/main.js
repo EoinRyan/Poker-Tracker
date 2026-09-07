@@ -73,6 +73,109 @@
 })();
 
 
+// ── Blinds: validation helpers ─────────────────────────────────
+function validateBlinds() {
+  const sbEl  = document.getElementById('small_blind');
+  const bbEl  = document.getElementById('big_blind');
+  const errEl = document.getElementById('blindsError');
+  if (!sbEl || !bbEl || !errEl) return true;
+
+  const sb = parseFloat(sbEl.value);
+  const bb = parseFloat(bbEl.value);
+
+  if (sbEl.value !== '' && isNaN(sb)) {
+    setError(sbEl, errEl, 'Small blind must be a number.');
+    return false;
+  }
+  if (bbEl.value !== '' && isNaN(bb)) {
+    setError(bbEl, errEl, 'Big blind must be a number.');
+    return false;
+  }
+  if (sbEl.value !== '' && sb < 0) {
+    setError(sbEl, errEl, 'Small blind cannot be negative.');
+    return false;
+  }
+  if (bbEl.value !== '' && bb < 0) {
+    setError(bbEl, errEl, 'Big blind cannot be negative.');
+    return false;
+  }
+  if (sbEl.value !== '' && bbEl.value !== '' && !isNaN(sb) && !isNaN(bb) && bb < sb) {
+    setError(bbEl, errEl, 'Big blind must be ≥ small blind.');
+    return false;
+  }
+
+  clearError(sbEl, errEl);
+  clearError(bbEl, errEl);
+  return true;
+}
+
+function validateAmount(fieldId, errorId) {
+  const el  = document.getElementById(fieldId);
+  const err = document.getElementById(errorId);
+  if (!el || !err) return true;
+
+  const val = parseFloat(el.value);
+  if (el.value !== '' && isNaN(val)) {
+    setError(el, err, 'Must be a number.');
+    return false;
+  }
+  if (!isNaN(val) && val < 0) {
+    setError(el, err, 'Cannot be negative.');
+    return false;
+  }
+  clearError(el, err);
+  return true;
+}
+
+function setError(inputEl, errEl, msg) {
+  inputEl.classList.add('input-error');
+  errEl.textContent = msg;
+}
+
+function clearError(inputEl, errEl) {
+  inputEl.classList.remove('input-error');
+  if (errEl) errEl.textContent = '';
+}
+
+// Quick-fill blinds from the preset dropdown
+function fillBlindsFromPreset(select) {
+  const val = select.value;
+  if (!val) return;
+  const parts = val.split('/');
+  if (parts.length !== 2) return;
+  const sbEl = document.getElementById('small_blind');
+  const bbEl = document.getElementById('big_blind');
+  if (sbEl) sbEl.value = parts[0].trim();
+  if (bbEl) bbEl.value = parts[1].trim();
+  validateBlinds();
+  // Reset the dropdown so it doesn't show as 'selected' persistently
+  select.value = '';
+}
+
+// Full client-side validation run before form submit
+function clientValidate() {
+  const b = validateBlinds();
+  const bi = validateAmount('buy_in',     'buyInError');
+  const ea = validateAmount('end_amount', 'endAmountError');
+
+  // Also check required fields are filled
+  const sbEl = document.getElementById('small_blind');
+  const bbEl = document.getElementById('big_blind');
+  const errEl = document.getElementById('blindsError');
+
+  if (sbEl && sbEl.value.trim() === '') {
+    setError(sbEl, errEl, 'Small blind is required.');
+    return false;
+  }
+  if (bbEl && bbEl.value.trim() === '') {
+    setError(bbEl, errEl, 'Big blind is required.');
+    return false;
+  }
+
+  return b && bi && ea;
+}
+
+
 // ── Analytics: Profit Chart ─────────────────────────────────
 (function () {
   const canvas = document.getElementById('profitChart');

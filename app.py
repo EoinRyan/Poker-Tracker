@@ -19,27 +19,59 @@ def index():
 @app.route("/add", methods=["GET", "POST"])
 def add_session():
     """Add a new poker session."""
+    previous_blinds = database.get_previous_blinds()
+
     if request.method == "POST":
         date = request.form.get("date", "").strip()
         game_type = request.form.get("game_type", "live").strip()
-        blinds = request.form.get("blinds", "").strip()
-        buy_in_str = request.form.get("buy_in", "0").strip()
-        end_amount_str = request.form.get("end_amount", "0").strip()
+        small_blind_str = request.form.get("small_blind", "").strip()
+        big_blind_str   = request.form.get("big_blind",   "").strip()
+        buy_in_str      = request.form.get("buy_in",      "0").strip()
+        end_amount_str  = request.form.get("end_amount",  "0").strip()
         notes = request.form.get("notes", "").strip()
 
-        # Basic validation
         errors = []
+
         if not date:
             errors.append("Date is required.")
-        if not blinds:
-            errors.append("Blinds are required.")
+
+        # Validate small blind
+        try:
+            small_blind = float(small_blind_str)
+            if small_blind < 0:
+                errors.append("Small blind cannot be negative.")
+        except ValueError:
+            small_blind = None
+            errors.append("Small blind must be a number.")
+
+        # Validate big blind
+        try:
+            big_blind = float(big_blind_str)
+            if big_blind < 0:
+                errors.append("Big blind cannot be negative.")
+        except ValueError:
+            big_blind = None
+            errors.append("Big blind must be a number.")
+
+        # Ensure big blind >= small blind
+        if small_blind is not None and big_blind is not None:
+            if big_blind < small_blind:
+                errors.append("Big blind must be greater than or equal to the small blind.")
+
+        # Validate buy-in
         try:
             buy_in = float(buy_in_str)
+            if buy_in < 0:
+                errors.append("Buy-in cannot be negative.")
         except ValueError:
             buy_in = 0
             errors.append("Buy-in must be a number.")
+
+        # Validate end amount
         try:
             end_amount = float(end_amount_str)
+            if end_amount < 0:
+                errors.append("End amount cannot be negative.")
         except ValueError:
             end_amount = 0
             errors.append("End amount must be a number.")
@@ -51,8 +83,11 @@ def add_session():
                 "add_session.html",
                 today=today_date.today().isoformat(),
                 form_data=request.form,
+                previous_blinds=previous_blinds,
             )
 
+        # Format blinds as "SB/BB" string for storage
+        blinds = f"{small_blind:g}/{big_blind:g}"
         database.add_session(date, game_type, blinds, buy_in, end_amount, notes)
         flash("Session added successfully!", "success")
         return redirect(url_for("analytics"))
@@ -61,6 +96,7 @@ def add_session():
         "add_session.html",
         today=today_date.today().isoformat(),
         form_data=None,
+        previous_blinds=previous_blinds,
     )
 
 

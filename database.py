@@ -92,3 +92,25 @@ def get_sessions_for_chart():
     ).fetchall()
     conn.close()
     return rows
+
+
+def get_previous_blinds():
+    """Return unique blinds from past sessions, most recently used first."""
+    conn = get_db()
+    rows = conn.execute(
+        """
+        SELECT DISTINCT blinds
+        FROM sessions
+        ORDER BY id DESC
+        """
+    ).fetchall()
+    conn.close()
+    # De-duplicate while preserving order (DISTINCT alone doesn't guarantee order
+    # across identical values, so we filter manually)
+    seen = set()
+    unique = []
+    for row in rows:
+        if row["blinds"] not in seen:
+            seen.add(row["blinds"])
+            unique.append(row["blinds"])
+    return unique

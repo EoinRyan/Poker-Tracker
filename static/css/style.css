@@ -587,7 +587,60 @@ input[type="date"].form-input {
   color: var(--color-text-dim);
 }
 
-/* Input with prefix ($) */
+.form-error {
+  font-size: 0.8rem;
+  color: var(--color-loss);
+  font-weight: 500;
+  min-height: 1.1em;
+}
+
+.input-error {
+  border-color: var(--color-loss) !important;
+  box-shadow: 0 0 0 3px rgba(224, 82, 82, 0.12) !important;
+}
+
+/* Blinds quick-fill dropdown */
+.blinds-quick-fill {
+  margin-bottom: 10px;
+}
+
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Blinds dual-input row */
+.blinds-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.blinds-inputs .input-prefix-wrap {
+  flex: 1;
+}
+
+.blinds-divider {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text-dim);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.blinds-label-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+
 .input-prefix-wrap {
   position: relative;
 }
