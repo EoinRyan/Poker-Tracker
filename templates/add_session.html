@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Add Session — Poker Tracker{% endblock %}
+{% block description %}Log a new poker session including buy-in, end amount, blinds, and notes.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container container-narrow">
+    <div class="page-header">
+      <h1 class="page-title">Add New Session</h1>
+      <p class="page-subtitle">Record the details of your poker session below.</p>
+    </div>
+
+    <div class="card form-card">
+      <form method="POST" action="{{ url_for('add_session') }}" id="sessionForm" novalidate>
+
+        <!-- Date & Game Type Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date" class="form-label">Date</label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              class="form-input"
+              value="{{ form_data.get('date', today) if form_data else today }}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Game Type</label>
+            <div class="toggle-group" role="group" aria-label="Game type">
+              <input type="radio" id="type_live" name="game_type" value="live"
+                {% if not form_data or form_data.get('game_type', 'live') == 'live' %}checked{% endif %}
+                class="toggle-radio" />
+              <label for="type_live" class="toggle-label" id="label-live">🏠 Live</label>
+
+              <input type="radio" id="type_online" name="game_type" value="online"
+                {% if form_data and form_data.get('game_type') == 'online' %}checked{% endif %}
+                class="toggle-radio" />
+              <label for="type_online" class="toggle-label" id="label-online">💻 Online</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blinds -->
+        <div class="form-group">
+          <label for="blinds" class="form-label">Blinds</label>
+          <input
+            type="text"
+            id="blinds"
+            name="blinds"
+            class="form-input"
+            placeholder="e.g. 1/2, 2/5, 5/10"
+            value="{{ form_data.get('blinds', '') if form_data else '' }}"
+            required
+          />
+          <span class="form-hint">Enter small blind / big blind (e.g. 1/2)</span>
+        </div>
+
+        <!-- Buy-in & End Amount -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="buy_in" class="form-label">Buy-In ($)</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input
+                type="number"
+                id="buy_in"
+                name="buy_in"
+                class="form-input input-prefixed"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                value="{{ form_data.get('buy_in', '') if form_data else '' }}"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="end_amount" class="form-label">End Amount ($)</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input
+                type="number"
+                id="end_amount"
+                name="end_amount"
+                class="form-input input-prefixed"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                value="{{ form_data.get('end_amount', '') if form_data else '' }}"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Net Preview -->
+        <div class="net-preview" id="netPreview" aria-live="polite">
+          <span class="net-preview-label">Session Result</span>
+          <span class="net-preview-value" id="netPreviewValue">—</span>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label for="notes" class="form-label">Notes <span class="optional-tag">optional</span></label>
+          <textarea
+            id="notes"
+            name="notes"
+            class="form-input form-textarea"
+            placeholder="How did it go? Any reads, big hands, or lessons learned..."
+            rows="4"
+          >{{ form_data.get('notes', '') if form_data else '' }}</textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <a href="{{ url_for('analytics') }}" class="btn btn-ghost" id="form-cancel">Cancel</a>
+          <button type="submit" class="btn btn-primary" id="form-submit">
+            <span>Save Session</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Poker Tracker — Home{% endblock %}
+{% block description %}Track your poker sessions and monitor your profits with PokerTracker.{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-bg-cards" aria-hidden="true">
+    <span class="bg-card bc1">A♠</span>
+    <span class="bg-card bc2">K♥</span>
+    <span class="bg-card bc3">Q♦</span>
+    <span class="bg-card bc4">J♣</span>
+    <span class="bg-card bc5">10♠</span>
+  </div>
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Your Edge at<br/>
+      <span class="hero-accent">Every Table</span>
+    </h1>
+    <p class="hero-subtitle">
+      Log sessions, track profits, and uncover the patterns that make you a better player.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('add_session') }}" class="btn btn-primary btn-lg" id="hero-add-session">
+        <span>+ Add Session</span>
+      </a>
+      <a href="{{ url_for('analytics') }}" class="btn btn-ghost btn-lg" id="hero-view-analytics">
+        View Analytics →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Stats -->
+{% if agg and agg['total_sessions'] > 0 %}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Your Overview</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value">{{ agg['total_sessions'] }}</div>
+        <div class="stat-label">Total Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">${{ '%.2f'|format(agg['total_buy_in']) }}</div>
+        <div class="stat-label">Total Buy-In</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value">${{ '%.2f'|format(agg['total_earned']) }}</div>
+        <div class="stat-label">Total Earned</div>
+      </div>
+      <div class="stat-card {% if agg['total_net'] >= 0 %}stat-positive{% else %}stat-negative{% endif %}">
+        <div class="stat-icon">{{ '📈' if agg['total_net'] >= 0 else '📉' }}</div>
+        <div class="stat-value net-value">
+          {{ '+' if agg['total_net'] >= 0 else '' }}${{ '%.2f'|format(agg['total_net']) }}
+        </div>
+        <div class="stat-label">Net Profit / Loss</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="section">
+  <div class="container">
+    <div class="empty-state">
+      <div class="empty-icon">🃏</div>
+      <h2>No sessions yet</h2>
+      <p>Add your first poker session to start tracking your progress.</p>
+      <a href="{{ url_for('add_session') }}" class="btn btn-primary" id="empty-add-session">+ Add Your First Session</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Feature Cards -->
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Everything You Need</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Session Logging</h3>
+        <p>Record buy-ins, end stacks, blinds, game type and personal notes for every session.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Profit Analytics</h3>
+        <p>Visualize your cumulative profit over time with a beautiful line chart.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎰</div>
+        <h3>Live &amp; Online</h3>
+        <p>Track both live casino sessions and online sessions separately.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

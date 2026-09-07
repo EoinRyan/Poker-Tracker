@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics — Poker Tracker{% endblock %}
+{% block description %}Analyze your poker session history, track profits, and review your performance.{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <div class="page-header page-header-row">
+      <div>
+        <h1 class="page-title">Analytics</h1>
+        <p class="page-subtitle">Your complete session history and performance stats.</p>
+      </div>
+      <a href="{{ url_for('add_session') }}" class="btn btn-primary" id="analytics-add-session">+ Add Session</a>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="stats-grid stats-grid-5">
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value">{{ agg['total_sessions'] }}</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💸</div>
+        <div class="stat-value">${{ '%.2f'|format(agg['total_buy_in']) }}</div>
+        <div class="stat-label">Total Buy-In</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">${{ '%.2f'|format(agg['total_earned']) }}</div>
+        <div class="stat-label">Total Earned</div>
+      </div>
+      <div class="stat-card {% if agg['total_net'] >= 0 %}stat-positive{% else %}stat-negative{% endif %}">
+        <div class="stat-icon">{{ '📈' if agg['total_net'] >= 0 else '📉' }}</div>
+        <div class="stat-value">
+          {{ '+' if agg['total_net'] >= 0 else '' }}${{ '%.2f'|format(agg['total_net']) }}
+        </div>
+        <div class="stat-label">Net P/L</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value">{{ win_rate }}%</div>
+        <div class="stat-label">Win Rate</div>
+      </div>
+    </div>
+
+    <!-- Profit Chart -->
+    {% if sessions %}
+    <div class="card chart-card">
+      <div class="chart-header">
+        <h2 class="card-title">Cumulative Profit Over Time</h2>
+        <div class="chart-legend">
+          <span class="legend-dot legend-profit"></span> Profit / Loss
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="profitChart" aria-label="Cumulative profit chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Session Log Table -->
+    <div class="card table-card">
+      <div class="table-header">
+        <h2 class="card-title">Session Log</h2>
+        <span class="session-count">{{ sessions|length }} session{{ 's' if sessions|length != 1 else '' }}</span>
+      </div>
+      <div class="table-responsive">
+        <table class="sessions-table" id="sessionsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Blinds</th>
+              <th>Buy-In</th>
+              <th>End Amount</th>
+              <th>Net Result</th>
+              <th>Notes</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in sessions %}
+            <tr class="session-row {{ 'row-win' if s['net'] > 0 else ('row-loss' if s['net'] < 0 else 'row-even') }}">
+              <td data-label="Date">{{ s['date'] }}</td>
+              <td data-label="Type">
+                <span class="badge {{ 'badge-live' if s['game_type'] == 'live' else 'badge-online' }}">
+                  {{ '🏠' if s['game_type'] == 'live' else '💻' }} {{ s['game_type']|capitalize }}
+                </span>
+              </td>
+              <td data-label="Blinds">{{ s['blinds'] }}</td>
+              <td data-label="Buy-In">${{ '%.2f'|format(s['buy_in']) }}</td>
+              <td data-label="End Amount">${{ '%.2f'|format(s['end_amount']) }}</td>
+              <td data-label="Net Result">
+                <span class="net-badge {{ 'net-win' if s['net'] > 0 else ('net-loss' if s['net'] < 0 else 'net-even') }}">
+                  {{ '+' if s['net'] > 0 else '' }}${{ '%.2f'|format(s['net']) }}
+                </span>
+              </td>
+              <td data-label="Notes" class="notes-cell">
+                {% if s['notes'] %}
+                  <span class="notes-text" title="{{ s['notes'] }}">{{ s['notes'] }}</span>
+                {% else %}
+                  <span class="no-notes">—</span>
+                {% endif %}
+              </td>
+              <td data-label="Action">
+                <form method="POST" action="{{ url_for('delete_session', session_id=s['id']) }}"
+                      onsubmit="return confirm('Delete this session?')"
+                      class="delete-form">
+                  <button type="submit" class="btn-delete" aria-label="Delete session" id="delete-session-{{ s['id'] }}">
+                    🗑
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h2>No sessions recorded yet</h2>
+      <p>Start tracking your sessions to see analytics here.</p>
+      <a href="{{ url_for('add_session') }}" class="btn btn-primary" id="empty-analytics-add">+ Add Your First Session</a>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% if sessions %}
+<script>
+  window.CHART_LABELS = {{ chart_labels | tojson }};
+  window.CHART_VALUES = {{ chart_values | tojson }};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endif %}
+{% endblock %}
