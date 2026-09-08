@@ -17,8 +17,6 @@ app.permanent_session_lifetime = timedelta(days=30)
 # Register auth blueprint
 app.register_blueprint(auth_bp)
 
-# Initialize the database on startup
-database.init_db()
 
 
 # ── Login Required Decorator ──────────────────────────────────
